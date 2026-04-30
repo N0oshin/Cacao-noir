@@ -12,6 +12,7 @@ export default function OrderConfirmation({ cart, setCart }) {
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [rewardCode] = useState(() => `CN-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`);
   const [leaderboard, setLeaderboard] = useState([]);
 
   const VALID_COUPONS = {
@@ -51,6 +52,12 @@ export default function OrderConfirmation({ cart, setCart }) {
   };
 
   const handlePlaceOrder = () => {
+    // Store valid barcode in localStorage with 7-day expiration
+    const validCodes = JSON.parse(localStorage.getItem('cn_valid_barcodes') || '[]');
+    const expiration = Date.now() + (7 * 24 * 60 * 60 * 1000);
+    validCodes.push({ code: rewardCode, expiresAt: expiration });
+    localStorage.setItem('cn_valid_barcodes', JSON.stringify(validCodes));
+
     setIsOrderPlaced(true);
     if (setCart) setCart({});
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -145,7 +152,7 @@ export default function OrderConfirmation({ cart, setCart }) {
         {isOrderPlaced && (
           <div className="oc-card oc-reward-card">
             <div className="oc-qr-badge">🎁 Your Exclusive Reward Code</div>
-            <h2 className="oc-card-title">CN-{Math.random().toString(36).substring(2, 6).toUpperCase()}-{Math.random().toString(36).substring(2, 6).toUpperCase()}</h2>
+            <h2 className="oc-card-title">{rewardCode}</h2>
             <p className="oc-qr-desc">
               Congratulations! Use this secret code to unlock the Chocolate Realm.
               Head to the <strong>Game Room</strong> in our Experience section and enter your reward to play!

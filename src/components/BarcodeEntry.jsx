@@ -7,10 +7,23 @@ export default function BarcodeEntry({ onClose }) {
   const navigate = useNavigate();
 
   const handleEnterGame = () => {
-    if (barcode.trim()) {
-      navigate('/games');
+    const enteredCode = barcode.trim().toUpperCase();
+    if (!enteredCode) {
+      alert('Please enter your unique reward code.');
+      return;
+    }
+
+    const validCodes = JSON.parse(localStorage.getItem('cn_valid_barcodes') || '[]');
+    const entry = validCodes.find(item => item.code === enteredCode);
+
+    if (entry) {
+      if (Date.now() < entry.expiresAt) {
+        navigate('/games');
+      } else {
+        alert('This reward code has expired. Codes are only valid for 7 days after purchase.');
+      }
     } else {
-      alert('Please enter the barcode found on your chocolate box.');
+      alert('Invalid code. Please use the unique code generated after your Cacao Noir purchase.');
     }
   };
 
