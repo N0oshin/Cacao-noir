@@ -467,7 +467,11 @@ export default function SnakesLadders() {
       {!started && (
         <div className="sl-start-screen">
           <h1 className="sl-start-title">Snake &amp; Ladders</h1>
-          <p className="sl-start-sub">Climb to the mystery rewards within limited rolls!</p>
+          <p className="sl-start-sub">The Hunt is On</p>
+          <div className="sl-rules-box">
+            <p className="sl-rule">✨ Discover the <strong> ? </strong> cells to unlock hidden chocolate rewards.</p>
+            <p className="sl-rule">🏆 Reach the <strong>Golden 100</strong> to claim your <strong>50% OFF</strong> Grand Ticket.</p>
+          </div>
           <div className="sl-name-row">
             <span className="sl-name-label" style={{ color: PLAYER_COLORS[0] }}>●</span>
             <input
@@ -482,7 +486,7 @@ export default function SnakesLadders() {
             className="sl-btn-primary"
             onClick={() => {
               setPlayerNames([nameInput[0] || 'Player 1']);
-              setRollsRemaining(Math.floor(Math.random() * 7) + 6);
+              setRollsRemaining(Math.floor(Math.random() * 6) + 10);
               setStarted(true);
             }}
           >
@@ -556,7 +560,6 @@ export default function SnakesLadders() {
               }}>
                 {copied === reward.code ? '✓ Copied! Redirecting...' : '📋 Copy Code & Exit'}
               </button>
-              <button className="sl-btn-ghost" onClick={() => navigate('/')}>End Game Without Code</button>
             </div>
           </div>
         </div>
@@ -572,8 +575,8 @@ export default function SnakesLadders() {
 
             <div className="sl-win-reward">
               <p className="sl-modal-sub-label">Your Grand Victory Reward:</p>
-              <div className="sl-modal-code">GOLDEN30</div>
-              <p className="sl-modal-hint">(30% Off Golden Ticket)</p>
+              <div className="sl-modal-code">GOLDEN50</div>
+              <p className="sl-modal-hint">(50% Off Golden Ticket)</p>
             </div>
 
             <div className="sl-win-share">
@@ -582,9 +585,9 @@ export default function SnakesLadders() {
                   📸 Share Screenshot
                 </button>
                 <button className="sl-btn-ghost" onClick={() => {
-                  copyCode('GOLDEN30');
+                  copyCode('GOLDEN50');
                 }}>
-                  {copied === 'GOLDEN30' ? '✓ Copied!' : '📋 Copy My Ticket'}
+                  {copied === 'GOLDEN50' ? '✓ Copied!' : '📋 Copy My Ticket'}
                 </button>
                 <button className="sl-btn-ghost" style={{ width: '100%' }} onClick={() => navigate('/')}>
                   🚪 End Game

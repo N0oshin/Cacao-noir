@@ -370,6 +370,21 @@
   color: var(--gold-light);
 }
 
+.btn-experience {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold-light);
+  background-color: var(--bg-deepest);
+  border: 1px solid rgba(200, 150, 62, 0.4);
+  padding: 0.75rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s, border-color 0.3s;
+}
+
 .oc-rewards-hint {
   display: flex;
   flex-direction: column;

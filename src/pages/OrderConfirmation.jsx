@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { productsData } from '../components/Products';
+import BarcodeEntry from '../components/BarcodeEntry';
 import bgImage from '../assets/images/background.png';
 import '../styles/OrderConfirmation.css';
 
@@ -16,13 +17,15 @@ export default function OrderConfirmation({ cart, setCart }) {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [rewardCode] = useState(() => `CN-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [showBarcodeModal, setShowBarcodeModal] = useState(false);
 
   const VALID_COUPONS = {
     'SAMPLE': { discount: 0.00, label: 'Free Sample' },
     'NOIR10': { discount: 0.10, label: '10% OFF' },
     'NOIR05': { discount: 0.05, label: '5% OFF' },
     'NOIR20': { discount: 0.20, label: '20% OFF' },
-    'CHOCFREE': { discount: 0.00, label: 'Free Box' }
+    'CHOCFREE': { discount: 0.00, label: 'Free Box' },
+    'GOLDEN50': { discount: 0.50, label: 'Golden Ticket' }
   };
 
   useEffect(() => {
@@ -175,10 +178,17 @@ export default function OrderConfirmation({ cart, setCart }) {
               <Link to="/" className="oc-btn-primary">
                 ✨ Back to Home
               </Link>
+              <button className="btn-experience" onClick={() => setShowBarcodeModal(true)}>
+                <span>Enter the Game Room</span>
+              </button>
             </div>
           </div>
         )}
       </div>
+
+      {showBarcodeModal && (
+        <BarcodeEntry onClose={() => setShowBarcodeModal(false)} />
+      )}
 
       {/* Leaderboard - Only show if not placing order or if we want to fill space */}
       {leaderboard.length > 0 && isOrderPlaced && (
