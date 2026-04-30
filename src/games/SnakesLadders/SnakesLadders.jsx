@@ -28,8 +28,8 @@ const ALL_REWARDS = [
   { code: 'CHOCFREE', label: 'Free Chocolate Box with any order! 📦' }
 ];
 
-const PLAYER_COLORS = ['#f0c060', '#e06040'];
-const PLAYER_NAMES = ['Player 1', 'Player 2'];
+const PLAYER_COLORS = ['#f0c060'];
+const PLAYER_NAMES = ['Player 1'];
 
 /* ── Cell → canvas position ──────────────────────── */
 function cellToXY(cell) {
@@ -46,7 +46,7 @@ function cellToXY(cell) {
 class GameScene extends Phaser.Scene {
   constructor() {
     super('GameScene');
-    this.positions = [1, 1];
+    this.positions = [1];
     this.turn = 0;
     this.rolling = false;
     this.onRollDone = null;
@@ -146,10 +146,12 @@ class GameScene extends Phaser.Scene {
       }
 
       // Cell number
+      const isFinish = cell === 100;
       this.add.text(cx + 4, cy + 3, String(cell), {
-        fontSize: '9px',
-        color: '#8b6420',
+        fontSize: isFinish ? '12px' : '9px',
+        color: isFinish ? '#f0c060' : '#8b6420',
         fontFamily: 'Montserrat',
+        fontStyle: isFinish ? 'bold' : 'normal',
       }).setDepth(6);
     }
   }
@@ -187,7 +189,7 @@ class GameScene extends Phaser.Scene {
         const pt = snakeCurve.getPoint(tVal);
         const radius = 6 * (1 - tVal * 0.8); // Tapering
         const color = i % 4 === 0 ? 0x228822 : 0x116611; // Scales pattern (Green)
-        
+
         g.fillStyle(color, 1);
         g.fillCircle(pt.x, pt.y, radius);
       }
@@ -195,7 +197,7 @@ class GameScene extends Phaser.Scene {
       // Draw Head
       g.fillStyle(0x228822, 1);
       g.fillEllipse(h.x, h.y, 14, 10);
-      
+
       // Eyes
       g.fillStyle(0xffffff, 1);
       g.fillCircle(h.x - 3, h.y - 2, 2);
@@ -203,7 +205,7 @@ class GameScene extends Phaser.Scene {
       g.fillStyle(0x000000, 1);
       g.fillCircle(h.x - 3, h.y - 2, 1);
       g.fillCircle(h.x + 3, h.y - 2, 1);
-      
+
       g.setDepth(4);
     });
 
@@ -258,7 +260,7 @@ export default function SnakesLadders() {
   const gameRef = useRef(null);
   const sceneRef = useRef(null);
 
-  const [positions, setPositions] = useState([1, 1]);
+  const [positions, setPositions] = useState([1]);
   const [turn, setTurn] = useState(0);
   const [lastDice, setLastDice] = useState(null);
   const navigate = useNavigate();
@@ -266,15 +268,13 @@ export default function SnakesLadders() {
   const [winner, setWinner] = useState(null);
   const [reward, setReward] = useState(null);
   const [isRollingDice, setIsRollingDice] = useState(false);
-  const [leaderboard, setLeaderboard] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('cn_leaderboard') || '[]'); }
-    catch { return []; }
-  });
+  const [rollsRemaining, setRollsRemaining] = useState(0);
   const [turns, setTurns] = useState(0);
   const [copied, setCopied] = useState('');
-  const [playerNames, setPlayerNames] = useState([...PLAYER_NAMES]);
-  const [nameInput, setNameInput] = useState([...PLAYER_NAMES]);
+  const [playerNames, setPlayerNames] = useState(['Player 1']);
+  const [nameInput, setNameInput] = useState(['Player 1']);
   const [started, setStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const gameInitialized = useRef(false);
 
@@ -331,10 +331,70 @@ export default function SnakesLadders() {
 
   /* Roll dice */
   const rollDice = () => {
-    if (rolling || winner || !started || isRollingDice) return;
+    if (rolling || winner || !started || isRollingDice || rollsRemaining <= 0 || reward) return;
     setIsRollingDice(true);
 
-    // Dice rolling animation
+    const finalizeRoll = () => {
+      setIsRollingDice(false);
+      setRolling(true);
+
+      const dice = Math.ceil(Math.random() * 6);
+      setLastDice(dice);
+      setTurns(t => t + 1);
+      setRollsRemaining(r => r - 1);
+
+      setPositions(prev => {
+        const oldPos = prev[0];
+        let newPos = Math.min(oldPos + dice, 100);
+
+        const scene = sceneRef.current;
+        if (!scene) {
+          setRolling(false);
+          return prev;
+        }
+
+        scene.moveToken(0, oldPos, newPos, () => {
+          let msg = `You rolled ${dice}`;
+          let finalPos = newPos;
+
+          const checkMysteryReward = (pos) => {
+            if (pos === 38 || pos === 84) {
+              const randomReward = ALL_REWARDS[Math.floor(Math.random() * ALL_REWARDS.length)];
+              setReward(randomReward);
+              return true;
+            }
+            return false;
+          };
+
+          // Check snake
+          if (SNAKES[newPos]) {
+            finalPos = SNAKES[newPos];
+            scene.moveToken(0, newPos, finalPos, () => {
+              checkMysteryReward(finalPos);
+              completeMove(finalPos);
+            });
+            return;
+          }
+
+          // Check ladder
+          if (LADDERS[newPos]) {
+            finalPos = LADDERS[newPos].top;
+            scene.moveToken(0, newPos, finalPos, () => {
+              checkMysteryReward(finalPos);
+              completeMove(finalPos);
+            });
+            return;
+          }
+
+          checkMysteryReward(finalPos);
+          completeMove(finalPos);
+        });
+
+        return prev;
+      });
+    };
+
+    // Animation
     let count = 0;
     const interval = setInterval(() => {
       setLastDice(Math.ceil(Math.random() * 6));
@@ -344,85 +404,25 @@ export default function SnakesLadders() {
         finalizeRoll();
       }
     }, 60);
-
-    const finalizeRoll = () => {
-      setIsRollingDice(false);
-      setRolling(true);
-
-      const dice = Math.ceil(Math.random() * 6);
-      setLastDice(dice);
-      setTurns(t => t + 1);
-
-      setPositions(prev => {
-        const next = [...prev];
-        const oldPos = next[turn];
-        let newPos = Math.min(oldPos + dice, 100);
-
-        const scene = sceneRef.current;
-        if (!scene) {
-          setRolling(false);
-          return prev;
-        }
-
-        scene.moveToken(turn, oldPos, newPos, () => {
-          let msg = `${playerNames[turn]} rolled ${dice}`;
-          let finalPos = newPos;
-
-          const checkMysteryReward = (pos, message) => {
-            if (pos === 38 || pos === 84) {
-              const randomReward = ALL_REWARDS[Math.floor(Math.random() * ALL_REWARDS.length)];
-              setReward(randomReward);
-              return message + ` 🎁 Mystery Reward unlocked!`;
-            }
-            return message;
-          };
-
-          // Check snake
-          if (SNAKES[newPos]) {
-            finalPos = SNAKES[newPos];
-            scene.moveToken(turn, newPos, finalPos, () => {
-              const finalMsg = checkMysteryReward(finalPos, msg + ` 🐍 Snake! ${newPos}→${finalPos}`);
-              completeMove(finalPos, finalMsg);
-            });
-            return;
-          }
-
-          // Check ladder
-          if (LADDERS[newPos]) {
-            finalPos = LADDERS[newPos].top;
-            scene.moveToken(turn, newPos, finalPos, () => {
-              const finalMsg = checkMysteryReward(finalPos, msg + ` 🪜 Ladder! ${newPos}→${finalPos}`);
-              completeMove(finalPos, finalMsg);
-            });
-            return;
-          }
-
-          // Direct landing (no snake or ladder)
-          const finalMsg = checkMysteryReward(finalPos, msg);
-          completeMove(finalPos, finalMsg);
-        });
-
-        return prev; // we'll update after move
-      });
-    };
   };
 
-  function completeMove(finalPos, msg) {
-    setPositions(prev => {
-      const next = [...prev];
-      next[turn] = finalPos;
-      return next;
-    });
+  function completeMove(finalPos) {
+    setPositions([finalPos]);
+    setRolling(false);
 
     if (finalPos === 100) {
-      setWinner(turn);
-      saveToleaderboard(playerNames[turn]);
-      setRolling(false);
-      return;
+      setWinner(0);
+    } else if (rollsRemaining === 1 && finalPos !== 38 && finalPos !== 84) {
+      // check rollsRemaining === 1 because it's captured in closure or we rely on state update
+      // actually better to check it here after state update or pass it
     }
-    setTurn(t => (t + 1) % 2);
-    setRolling(false);
   }
+
+  useEffect(() => {
+    if (started && rollsRemaining === 0 && !reward && !winner && !rolling && !isRollingDice) {
+      setGameOver(true);
+    }
+  }, [rollsRemaining, reward, winner, rolling, isRollingDice, started]);
 
   // removed log function
   function saveToleaderboard(name) {
@@ -435,7 +435,7 @@ export default function SnakesLadders() {
   }
 
   function resetGame() {
-    setPositions([1, 1]);
+    setPositions([1]);
     setTurn(0);
     setLastDice(null);
     setRolling(false);
@@ -443,10 +443,10 @@ export default function SnakesLadders() {
     setReward(null);
     setTurns(0);
     setStarted(false);
-    // Reset Phaser tokens
+    setGameOver(false);
     const scene = sceneRef.current;
     if (scene?.tokens) {
-      scene.tokens.forEach((t, i) => {
+      scene.tokens.forEach((t) => {
         const { x, y } = cellToXY(1);
         t.setPosition(x, y);
       });
@@ -467,44 +467,27 @@ export default function SnakesLadders() {
       {!started && (
         <div className="sl-start-screen">
           <h1 className="sl-start-title">Snake &amp; Ladders</h1>
-          <p className="sl-start-sub">Enter player names to begin</p>
-          {[0, 1].map(i => (
-            <div key={i} className="sl-name-row">
-              <span className="sl-name-label" style={{ color: PLAYER_COLORS[i] }}>●</span>
-              <input
-                className="sl-name-input"
-                value={nameInput[i]}
-                onChange={e => {
-                  const n = [...nameInput];
-                  n[i] = e.target.value;
-                  setNameInput(n);
-                }}
-                maxLength={16}
-                placeholder={`Player ${i + 1} name`}
-              />
-            </div>
-          ))}
+          <p className="sl-start-sub">Climb to the mystery rewards within limited rolls!</p>
+          <div className="sl-name-row">
+            <span className="sl-name-label" style={{ color: PLAYER_COLORS[0] }}>●</span>
+            <input
+              className="sl-name-input"
+              value={nameInput[0]}
+              onChange={e => setNameInput([e.target.value])}
+              maxLength={16}
+              placeholder="Your name"
+            />
+          </div>
           <button
             className="sl-btn-primary"
             onClick={() => {
-              setPlayerNames([nameInput[0] || 'Player 1', nameInput[1] || 'Player 2']);
+              setPlayerNames([nameInput[0] || 'Player 1']);
+              setRollsRemaining(Math.floor(Math.random() * 7) + 6);
               setStarted(true);
             }}
           >
-            🎮 Start Game
+            🎮 Start Challenge
           </button>
-          {leaderboard.length > 0 && (
-            <div className="sl-lb-mini">
-              <p className="sl-lb-mini-title">🏅 Top Players</p>
-              {leaderboard.slice(0, 5).map((e, i) => (
-                <div key={i} className="sl-lb-mini-row">
-                  <span>{i + 1}.</span>
-                  <span>{e.name}</span>
-                  <span>{e.turns} turns</span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
@@ -520,30 +503,30 @@ export default function SnakesLadders() {
             <div className="sl-brand">CACAO<em>NOIR</em></div>
             <h2 className="sl-panel-title">Snake &amp; Ladders</h2>
 
-            {/* Dice */}
+            {/* Dice and Rolls */}
             <div className="sl-dice-area">
-              <div className="sl-dice" style={{ borderColor: PLAYER_COLORS[turn] }}>
+              <div className="sl-dice">
                 {lastDice ? ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][lastDice - 1] : '🎲'}
               </div>
+              <div className="sl-rolls-badge">
+                {rollsRemaining} Rolls Left
+              </div>
               <button
-                className={`sl-roll-btn`}
+                className="sl-roll-btn"
                 onClick={rollDice}
-                disabled={rolling || !!winner || isRollingDice}
-                style={{ '--pc': PLAYER_COLORS[turn] }}
+                disabled={rolling || !!winner || isRollingDice || rollsRemaining <= 0 || reward}
               >
-                {isRollingDice ? 'Rolling…' : (rolling ? 'Moving…' : `${playerNames[turn]}'s Turn`)}
+                {isRollingDice ? 'Rolling…' : (rolling ? 'Moving…' : 'Roll Dice')}
               </button>
             </div>
 
-            {/* Player positions */}
+            {/* Player position */}
             <div className="sl-positions">
-              {[0, 1].map(i => (
-                <div key={i} className={`sl-pos-row ${turn === i && !winner ? 'sl-pos-active' : ''}`}>
-                  <span className="sl-pos-dot" style={{ background: PLAYER_COLORS[i] }} />
-                  <span className="sl-pos-name">{playerNames[i]}</span>
-                  <span className="sl-pos-cell">Cell {positions[i]}</span>
-                </div>
-              ))}
+              <div className="sl-pos-row sl-pos-active">
+                <span className="sl-pos-dot" style={{ background: PLAYER_COLORS[0] }} />
+                <span className="sl-pos-name">{playerNames[0]}</span>
+                <span className="sl-pos-cell">Cell {positions[0]}</span>
+              </div>
             </div>
 
             {/* Catchy Quotes */}
@@ -560,19 +543,20 @@ export default function SnakesLadders() {
 
       {/* Reward Modal */}
       {reward && (
-        <div className="sl-modal-overlay" onClick={() => setReward(null)}>
+        <div className="sl-modal-overlay">
           <div className="sl-modal" onClick={e => e.stopPropagation()}>
             <div className="sl-modal-emoji">🎁</div>
-            <h2 className="sl-modal-title">You hit a Reward Ladder!</h2>
+            <h2 className="sl-modal-title">Success! You found a reward!</h2>
             <p className="sl-modal-label">{reward.label}</p>
             <div className="sl-modal-code">{reward.code}</div>
             <div className="sl-modal-actions">
               <button className="sl-btn-primary" onClick={() => {
                 copyCode(reward.code);
+                setTimeout(() => navigate('/'), 1500);
               }}>
-                {copied === reward.code ? '✓ Copied!' : '📋 Copy Code'}
+                {copied === reward.code ? '✓ Copied! Redirecting...' : '📋 Copy Code & Exit'}
               </button>
-              <button className="sl-btn-ghost" onClick={() => setReward(null)}>Continue Playing</button>
+              <button className="sl-btn-ghost" onClick={() => navigate('/')}>End Game Without Code</button>
             </div>
           </div>
         </div>
@@ -583,8 +567,8 @@ export default function SnakesLadders() {
         <div className="sl-modal-overlay">
           <div className="sl-modal sl-modal-win">
             <div className="sl-modal-emoji">🏆</div>
-            <h2 className="sl-modal-title">{playerNames[winner]} Wins!</h2>
-            <p className="sl-modal-label">Completed in {turns} turns</p>
+            <h2 className="sl-modal-title">{playerNames[0]} Won!</h2>
+            <p className="sl-modal-label">Grand Victory in only {turns} rolls!</p>
 
             <div className="sl-win-reward">
               <p className="sl-modal-sub-label">Your Grand Victory Reward:</p>
@@ -606,6 +590,20 @@ export default function SnakesLadders() {
                   🚪 End Game
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Game Over Modal */}
+      {gameOver && (
+        <div className="sl-modal-overlay">
+          <div className="sl-modal">
+            <div className="sl-modal-emoji">⌛</div>
+            <h2 className="sl-modal-title">Out of Rolls!</h2>
+            <p className="sl-modal-label">The rewards are almost within reach! Collect your new pass.</p>
+            <div className="sl-modal-actions">
+              <button className="sl-btn-ghost" onClick={() => navigate('/')}>🚪 Exit to Shop</button>
             </div>
           </div>
         </div>

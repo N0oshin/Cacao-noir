@@ -554,3 +554,19 @@
   border-color: var(--gold);
   color: var(--gold-light);
 }
+
+/* New Challenge UI */
+.sl-rolls-badge {
+  background: rgba(200, 150, 62, 0.15);
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: inset 0 0 10px rgba(200, 150, 62, 0.2);
+}
