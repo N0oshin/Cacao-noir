@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { productsData } from '../components/Products';
 import BarcodeEntry from '../components/BarcodeEntry';
+import { QRCodeCanvas } from 'qrcode.react';
 import bgImage from '../assets/images/background.png';
 import '../styles/OrderConfirmation.css';
 
@@ -170,6 +171,18 @@ export default function OrderConfirmation({ cart, setCart }) {
           <div className="oc-card oc-reward-card">
             <div className="oc-qr-badge">🎁 Your Exclusive Reward Code</div>
             <h2 className="oc-card-title">{rewardCode}</h2>
+
+            <div className="oc-qr-container">
+              <QRCodeCanvas
+                value={`${window.location.origin}/games?code=${rewardCode}`}
+                size={160}
+                bgColor={"transparent"}
+                fgColor={"#d4af37"}
+                level={"H"}
+                includeMargin={true}
+              />
+            </div>
+
             <p className="oc-qr-desc">
               Congratulations! Use this secret code to unlock the Chocolate Realm.
               Head to the <strong>Game Room</strong> in our Experience section and enter your reward to play!
