@@ -1,0 +1,145 @@
+/* ─── EXPERIENCE ─── */
+#experience {
+    padding: 8rem 4rem;
+    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-deepest) 100%);
+    text-align: center;
+}
+
+.experience-header {
+    margin-bottom: 4rem;
+}
+
+.experience-header .section-label {
+    justify-content: center;
+}
+
+.experience-header .section-label::before {
+    display: none;
+}
+
+.experience-tagline {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--cream-dim);
+    margin-top: 1.5rem;
+    font-weight: 300;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+}
+
+.experience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 4rem;
+    background: rgba(200, 150, 62, 0.1);
+}
+
+.exp-tile {
+    background: var(--bg-dark);
+    padding: 3.5rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s;
+}
+
+.exp-tile:hover {
+    background: var(--bg-mid);
+}
+
+.exp-tile::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transition: width 0.5s;
+}
+
+.exp-tile:hover::after {
+    width: 80%;
+}
+
+.exp-tile-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.game-tile-icon {
+    font-size: 1rem;
+    display: block;
+}
+
+.exp-tile-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 1rem;
+}
+
+.exp-tile-desc {
+    font-size: 1rem;
+    color: var(--cream-muted);
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+.experience-cta-wrapper {
+    margin-top: 5rem;
+}
+
+.experience-cta-text {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--cream-dim);
+    margin-bottom: 2rem;
+}
+
+.btn-experience {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--gold-light);
+    background-color: var(--bg-deepest);
+    border: 1px solid rgba(200, 150, 62, 0.4);
+    padding: 1.2rem 3rem;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.btn-experience::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.btn-experience:hover {
+    color: var(--bg_deepest);
+    border-color: var(--gold);
+}
+
+.btn-experience:hover::before {
+    transform: scaleX(1);
+}
+
+.btn-experience span {
+    position: relative;
+    z-index: 1;
+}

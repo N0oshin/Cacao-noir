@@ -1,0 +1,74 @@
+/* ─── CART CSS ─── */
+.cart-summary {
+  margin-bottom: 3rem;
+  padding: 1.5rem 2rem;
+  background: rgba(13, 5, 0, 0.6);
+  border-left: 2px solid var(--gold);
+  display: inline-block;
+  backdrop-filter: blur(8px);
+}
+
+.cart-summary h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.cart-item {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--cream-dim);
+  margin-bottom: 0.6rem;
+}
+
+.btn-add-cart {
+  background: transparent;
+  border: none;
+  cursor: none;
+  padding: 0;
+}
+
+.qty-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(200, 150, 62, 0.4);
+  padding: 0.4rem 1rem;
+  transition: border-color 0.3s;
+  cursor: none;
+  position: relative;
+  z-index: 10;
+}
+
+.qty-selector:hover {
+  border-color: var(--gold);
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 1.2rem;
+  font-family: 'Montserrat', sans-serif;
+  cursor: none;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-btn:hover {
+  color: var(--gold-light);
+}
+
+.qty-value {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: var(--cream);
+  min-width: 1.5rem;
+  text-align: center;
+}

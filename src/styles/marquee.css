@@ -1,0 +1,41 @@
+/* ─── MARQUEE ─── */
+.marquee-strip {
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold), var(--gold-deep));
+  padding: 0.85rem 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marqueeScroll 25s linear infinite;
+}
+
+.marquee-track span {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--bg-deepest);
+  padding: 0 3rem;
+}
+
+.marquee-dot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: var(--bg-deepest);
+  border-radius: 50%;
+  margin: 0 1rem;
+  vertical-align: middle;
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

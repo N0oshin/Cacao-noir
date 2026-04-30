@@ -1,0 +1,13 @@
+@import './variables.css';
+@import './global.css';
+@import './components.css';
+@import './navbar.css';
+@import './hero.css';
+@import './marquee.css';
+@import './products.css';
+@import './story.css';
+@import './experience.css';
+@import './contact.css';
+@import './footer.css';
+@import './cart.css';
+@import './responsive.css';

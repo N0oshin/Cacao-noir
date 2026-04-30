@@ -1,0 +1,68 @@
+/* ─── FOOTER ─── */
+footer {
+  background: var(--bg-deepest);
+  padding: 4rem 4rem 2.5rem;
+  border-top: 1px solid rgba(200, 150, 62, 0.12);
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(200, 150, 62, 0.08);
+}
+
+.footer-brand .nav-logo {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.footer-brand p {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--cream-muted);
+  max-width: 280px;
+  line-height: 1.7;
+}
+
+.footer-links h5 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.footer-links ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.footer-links ul a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--cream-muted);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links ul a:hover {
+  color: var(--gold-light);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--cream-muted);
+}
