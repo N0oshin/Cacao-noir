@@ -51,9 +51,7 @@ export default function Nav({ cart, setCart }) {
                     className="nav-buy-btn"
                     onClick={() => {
                       setCartOpen(false);
-                      const finalCart = { ...cart }; // Capture for state if needed
-                      setCart({});
-                      navigate('/order-confirmation', { state: { cart: finalCart } });
+                      navigate('/order-confirmation', { state: { cart } });
                     }}
                   >Proceed to Buy</button>
               </>

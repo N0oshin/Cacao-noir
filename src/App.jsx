@@ -14,7 +14,7 @@ export default function App() {
       <div className="app-container">
         <Routes>
           <Route path="/" element={<Home cart={cart} setCart={setCart} />} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation cart={cart} setCart={setCart} />} />
           <Route path="/games" element={<GameHub />} />
         </Routes>
       </div>
