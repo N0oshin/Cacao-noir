@@ -1,4 +1,4 @@
-import chocolateImg from '../assets/images/choco.png';
+import chocolateImg from '../assets/images/noir_absolu.png';
 import cocoaImg from '../assets/images/bean.png';
 
 export default function Story() {

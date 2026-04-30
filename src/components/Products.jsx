@@ -1,40 +1,40 @@
 import { useState } from 'react';
+import velvetImg from '../assets/images/velvet_eclipse.png';
+import noirImg from '../assets/images/noir_absolu.png';
+import crepImg from '../assets/images/crepscule.png';
 
 export const productsData = [
   {
     id: '01',
-    icon: '🌑',
     origin: 'Madagascar · 85% Cacao',
     name: 'Velvet Eclipse',
     desc: 'Deep forest fruits and smoky undertones with a finish that lingers like a moonlit evening. Our darkest expression — unapologetically bold.',
     price: 18,
     weight: '80g',
-    featured: false
+    featured: false,
+    image: velvetImg
   },
   {
     id: '02',
-    icon: '✦',
     origin: 'Ecuador · 72% Cacao',
     name: 'Noir Absolú',
-    desc: 'The pinnacle of our craft. Sun-dried Arriba beans from Piedra de Plata, yielding notes of black cherry.A masterpiece.',
+    desc: 'The pinnacle of our craft. Sun-dried Arriba beans from Piedra de Plata, yielding notes of black cherry. A masterpiece.',
     price: 26,
     weight: '80g',
     featured: true,
-    badge: 'Signature'
+    badge: 'Signature',
+    image: noirImg
   },
-
   {
-    id: '04',
-    icon: '🌙',
+    id: '03',
     origin: 'Ghana · 75% Cacao',
     name: 'Crépuscule',
     desc: 'Twilight in a bar. Rich roasted notes give way to warm spice and a whisper of dried orange. Complex, familiar, entirely your own.',
     price: 20,
     weight: '80g',
-    featured: false
+    featured: false,
+    image: crepImg
   },
-
-
 ];
 
 export default function Products({ cart, setCart }) {
@@ -85,7 +85,9 @@ export default function Products({ cart, setCart }) {
             <div key={product.id} className={`product-card ${product.featured ? 'featured' : ''}`}>
               {product.featured && <span className="featured-badge">{product.badge}</span>}
               <span className="product-number">{product.id}</span>
-              <div className="product-icon">{product.icon}</div>
+              <div className="product-image-container">
+                <img src={product.image} alt={product.name} className="product-card-image" />
+              </div>
               <p className="product-origin">{product.origin}</p>
               <h3 className="product-name">{product.name}</h3>
               <p className="product-desc">{product.desc}</p>
