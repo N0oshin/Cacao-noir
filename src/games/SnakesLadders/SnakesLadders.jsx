@@ -486,7 +486,7 @@ export default function SnakesLadders() {
             className="sl-btn-primary"
             onClick={() => {
               setPlayerNames([nameInput[0] || 'Player 1']);
-              setRollsRemaining(Math.floor(Math.random() * 6) + 10);
+              setRollsRemaining(Math.floor(Math.random() * 6) + 7);
               setStarted(true);
             }}
           >
