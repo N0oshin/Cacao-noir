@@ -127,6 +127,24 @@ class GameScene extends Phaser.Scene {
         });
       }
 
+      // Victory Goal
+      if (cell === 100) {
+        const choc = this.add.text(cx + CELL_SIZE / 2, cy + CELL_SIZE / 2, '🍫', {
+          fontSize: '40px',
+          shadow: { offsetX: 0, offsetY: 0, color: '#f0c060', blur: 15, fill: true },
+          resolution: 2,
+        }).setOrigin(0.5).setDepth(5);
+
+        this.tweens.add({
+          targets: choc,
+          scale: 1.2,
+          duration: 800,
+          yoyo: true,
+          repeat: -1,
+          ease: 'Sine.easeInOut'
+        });
+      }
+
       // Cell number
       this.add.text(cx + 4, cy + 3, String(cell), {
         fontSize: '9px',
@@ -161,8 +179,31 @@ class GameScene extends Phaser.Scene {
         new Phaser.Math.Vector2(ctrlX, ctrlY),
         new Phaser.Math.Vector2(t.x, t.y)
       );
-      g.lineStyle(4, 0xcc3322, 0.8);
-      snakeCurve.draw(g);
+
+      // Draw tapered body
+      const segments = 40;
+      for (let i = 0; i <= segments; i++) {
+        const tVal = i / segments;
+        const pt = snakeCurve.getPoint(tVal);
+        const radius = 6 * (1 - tVal * 0.8); // Tapering
+        const color = i % 4 === 0 ? 0x228822 : 0x116611; // Scales pattern (Green)
+        
+        g.fillStyle(color, 1);
+        g.fillCircle(pt.x, pt.y, radius);
+      }
+
+      // Draw Head
+      g.fillStyle(0x228822, 1);
+      g.fillEllipse(h.x, h.y, 14, 10);
+      
+      // Eyes
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(h.x - 3, h.y - 2, 2);
+      g.fillCircle(h.x + 3, h.y - 2, 2);
+      g.fillStyle(0x000000, 1);
+      g.fillCircle(h.x - 3, h.y - 2, 1);
+      g.fillCircle(h.x + 3, h.y - 2, 1);
+      
       g.setDepth(4);
     });
 
@@ -182,7 +223,7 @@ class GameScene extends Phaser.Scene {
 
       // Rungs
       const steps = 6;
-      for (let i = 0; i <= steps; i++) {
+      for (let i = 1; i < steps; i++) {
         const px = f.x + (t.x - f.x) * (i / steps);
         const py = f.y + (t.y - f.y) * (i / steps);
         g.lineBetween(px - 8, py, px + 8, py);

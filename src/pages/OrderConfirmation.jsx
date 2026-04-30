@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { productsData } from '../components/Products';
+import bgImage from '../assets/images/background.png';
 import '../styles/OrderConfirmation.css';
 
 export default function OrderConfirmation({ cart, setCart }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const pageRef = useRef(null);
   // Use cart from props or location state as fallback
   const currentCart = cart && Object.keys(cart).length > 0 ? cart : (location.state?.cart || {});
 
@@ -31,6 +33,17 @@ export default function OrderConfirmation({ cart, setCart }) {
     } catch { setLeaderboard([]); }
   }, []);
 
+  const handleMouseMove = (e) => {
+    if (!pageRef.current) return;
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const moveX = (clientX - innerWidth / 2) / (innerWidth / 2);
+    const moveY = (clientY - innerHeight / 2) / (innerHeight / 2);
+
+    pageRef.current.style.setProperty('--move-x', moveX);
+    pageRef.current.style.setProperty('--move-y', moveY);
+  };
+
   const items = Object.entries(currentCart).map(([id, qty]) => ({
     product: productsData.find(p => p.id === id),
     qty,
@@ -52,7 +65,6 @@ export default function OrderConfirmation({ cart, setCart }) {
   };
 
   const handlePlaceOrder = () => {
-    // Store valid barcode in localStorage with 7-day expiration
     const validCodes = JSON.parse(localStorage.getItem('cn_valid_barcodes') || '[]');
     const expiration = Date.now() + (7 * 24 * 60 * 60 * 1000);
     validCodes.push({ code: rewardCode, expiresAt: expiration });
@@ -64,8 +76,12 @@ export default function OrderConfirmation({ cart, setCart }) {
   };
 
   return (
-    <div className="oc-page">
-      <div className="oc-bg" />
+    <div className="oc-page" ref={pageRef} onMouseMove={handleMouseMove}>
+      <div
+        className="oc-bg"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+      <div className="oc-bg-overlay" />
       <Link to="/" className="oc-back">← Back to Shop</Link>
 
       {/* Conditional Header */}
@@ -78,9 +94,7 @@ export default function OrderConfirmation({ cart, setCart }) {
           </>
         ) : (
           <>
-            <div className="oc-icon">📦</div>
             <h1 className="oc-title">Complete Your Order</h1>
-            <p className="oc-subtitle">Review your selection and unlock your rewards.</p>
           </>
         )}
       </div>

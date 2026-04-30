@@ -11,12 +11,24 @@
 
 .oc-bg {
   position: fixed;
+  inset: -5%;
+  /* Extra room for movement */
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+  transform: translate(calc(var(--move-x, 0) * 30px), calc(var(--move-y, 0) * 30px)) scale(1.05);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: brightness(0.7) saturate(1.1);
+}
+
+.oc-bg-overlay {
+  position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(200, 150, 62, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(200, 150, 62, 0.04) 0%, transparent 70%);
+    radial-gradient(circle at center, transparent 20%, var(--bg-deepest) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.2), var(--bg-deepest));
+  z-index: 1;
   pointer-events: none;
-  z-index: 0;
 }
 
 .oc-back {
@@ -72,17 +84,11 @@
 
 .oc-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 500;
   color: var(--cream);
 }
 
-.oc-subtitle {
-  font-size: 1.1rem;
-  color: var(--cream-dim);
-  font-style: italic;
-  margin-top: 0.5rem;
-}
 
 .oc-body {
   display: flex;
@@ -183,7 +189,7 @@
 .oc-coupon-section {
   background: rgba(200, 150, 62, 0.05);
   border: 1px dashed rgba(200, 150, 62, 0.3);
-  padding: 1.5rem;
+  padding: 1rem;
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -192,7 +198,9 @@
   display: flex;
   gap: 0.5rem;
   justify-content: center;
-  margin-top: 0.75rem;
+  position: relative;
+  max-width: 300px;
+  margin: auto;
 }
 
 .oc-coupon-input {
@@ -289,11 +297,7 @@
   margin-bottom: 2rem;
 }
 
-.oc-input-group {
-  position: relative;
-  max-width: 300px;
-  margin: 0 auto 1.5rem;
-}
+
 
 .oc-barcode-input {
   width: 100%;

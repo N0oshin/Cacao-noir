@@ -103,7 +103,7 @@
     grid-template-columns: minmax(0, 560px);
     justify-items: center;
   }
-  
+
   .sl-panel {
     width: 100%;
     max-width: 560px;
