@@ -174,7 +174,7 @@ export default function OrderConfirmation({ cart, setCart }) {
 
             <div className="oc-qr-container">
               <QRCodeCanvas
-                value={`${window.location.origin}/games?code=${rewardCode}`}
+                value={`${window.location.origin}${window.location.pathname}#/games?code=${rewardCode}`}
                 size={160}
                 bgColor={"transparent"}
                 fgColor={"#d4af37"}
